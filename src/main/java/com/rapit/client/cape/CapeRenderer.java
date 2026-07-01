@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,9 +25,14 @@ import org.lwjgl.opengl.GL11;
  * see this cape unless they also run Rapit Client - it's a local
  * visual layer only.
  *
- * Texture lives at assets/rapitclient/textures/cape/cape.png. Ship
- * your own artwork there; see CapeModule's javadoc for the copyright
- * note on why no Garfield artwork is bundled.
+ * Default texture is a plain dark cape (no logo). Ships at
+ * assets/rapitclient/textures/cape/cape.png - swap the PNG to change
+ * the design, no code changes required.
+ *
+ * Motion smoothing: rotation is driven off the entity's own
+ * interpolated body yaw/pitch (same values vanilla uses for its own
+ * player model) rather than a free-running timer, which is what was
+ * causing visible jitter/drift relative to the player model before.
  */
 public class CapeRenderer {
 
@@ -48,7 +54,7 @@ public class CapeRenderer {
         }
 
         ModuleManager modules = RapitClient.instance.getModuleManager();
-        CapeModule cape = (CapeModule) modules.getByName("Garfield Cape");
+        CapeModule cape = (CapeModule) modules.getByName("Cape");
         CosmeticsToggleModule master = (CosmeticsToggleModule) modules.getByName("Cosmetics");
         if (cape == null || master == null || !cape.isEnabled() || !master.isEnabled()) {
             return;
@@ -60,14 +66,26 @@ public class CapeRenderer {
 
         float partialTicks = event.partialRenderTick;
 
+        // Interpolated body yaw, matching how vanilla positions the
+        // player model itself this frame - this is what keeps the
+        // cape locked to the shoulders instead of swimming/jittering
+        // relative to the body during turns.
+        float bodyYaw = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * partialTicks;
+        float headYaw = player.prevRotationYawHead + (player.rotationYawHead - player.prevRotationYawHead) * partialTicks;
+        float relativeYaw = headYaw - bodyYaw;
+
+        // Gentle motion-driven sway: proportional to actual movement
+        // speed (limbSwingAmount), not a free-running clock, so it
+        // settles to a still hang the instant the player stops.
+        float limbSwing = player.prevLimbSwingAmount + (player.limbSwingAmount - player.prevLimbSwingAmount) * partialTicks;
+        float sway = MathHelper.clamp_float(limbSwing, 0F, 1F) * 6F;
+
         GlStateManager.pushMatrix();
         GlStateManager.translate(event.x, event.y, event.z);
-
-        // Position roughly at the shoulders, matching vanilla cape
-        // anchor points, then let it swing slightly with movement.
-        double swing = Math.sin((player.ticksExisted + partialTicks) * 0.2) * 0.05;
-        GlStateManager.translate(0.0D, 1.35D, 0.15D);
-        GlStateManager.rotate((float) Math.toDegrees(swing), 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(-bodyYaw, 0.0F, 1.0F, 0.0F);
+        GlStateManager.translate(0.0D, 1.36D, 0.16D);
+        GlStateManager.rotate(sway, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(180.0F - relativeYaw * 0.2F, 0.0F, 1.0F, 0.0F);
 
         mc.getTextureManager().bindTexture(CAPE_TEXTURE);
         drawCapeQuad();

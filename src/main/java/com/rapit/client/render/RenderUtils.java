@@ -18,7 +18,29 @@ public final class RenderUtils {
     public static final int THEME_YELLOW = 0xFFFFD400;
     public static final int THEME_BLACK_TRANSLUCENT = 0xB0111111;
 
+    /**
+     * Multiplier applied to the alpha channel of every color passed
+     * to drawRect/drawString while non-1.0. ModuleManager sets this
+     * to a module's hudOpacity right before calling its
+     * onRenderOverlay and resets it to 1.0 right after, which is how
+     * the per-HUD-element opacity slider works without every module
+     * needing to know about opacity itself.
+     */
+    private static float globalAlpha = 1.0F;
+
     private RenderUtils() {
+    }
+
+    public static void setGlobalAlpha(float alpha) {
+        globalAlpha = alpha;
+    }
+
+    private static int applyGlobalAlpha(int argb) {
+        if (globalAlpha >= 1.0F) {
+            return argb;
+        }
+        int a = (int) (((argb >>> 24) & 0xFF) * globalAlpha);
+        return (a << 24) | (argb & 0x00FFFFFF);
     }
 
     public static FontRenderer font() {
@@ -27,6 +49,7 @@ public final class RenderUtils {
 
     /** Flat rectangle, alpha-aware. */
     public static void drawRect(float x, float y, float width, float height, int color) {
+        color = applyGlobalAlpha(color);
         float a = (color >> 24 & 255) / 255F;
         float r = (color >> 16 & 255) / 255F;
         float g = (color >> 8 & 255) / 255F;
@@ -72,11 +95,21 @@ public final class RenderUtils {
     }
 
     public static void drawString(String text, float x, float y, int color, boolean shadow) {
+        color = applyGlobalAlpha(color);
         if (shadow) {
             font().drawStringWithShadow(text, (int) x, (int) y, color);
         } else {
             font().drawString(text, (int) x, (int) y, color);
         }
+    }
+
+    /** Draws text scaled up/down around its top-left origin, for premium-feeling headers/titles. */
+    public static void drawScaledString(String text, float x, float y, float scale, int color, boolean shadow) {
+        GL11.glPushMatrix();
+        GL11.glTranslatef(x, y, 0);
+        GL11.glScalef(scale, scale, 1.0F);
+        drawString(text, 0, 0, color, shadow);
+        GL11.glPopMatrix();
     }
 
     public static int getStringWidth(String text) {

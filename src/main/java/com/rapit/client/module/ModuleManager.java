@@ -21,6 +21,8 @@ import com.rapit.client.modules.visual.FullbrightModule;
 import com.rapit.client.modules.visual.ItemCounterModule;
 import com.rapit.client.modules.visual.KeystrokesModule;
 import com.rapit.client.modules.visual.ZoomModule;
+import com.rapit.client.modules.visual.BlockOutlineModule;
+import com.rapit.client.render.RenderUtils;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -62,6 +64,7 @@ public class ModuleManager {
         register(new KeystrokesModule());
         register(new ClearWaterModule());
         register(new ItemCounterModule());
+        register(new BlockOutlineModule());
 
         // --- Performance ---
         register(new EntityCullingModule());
@@ -132,9 +135,24 @@ public class ModuleManager {
         ScaledResolution sr = new ScaledResolution(mc);
         for (Module m : modules) {
             if (m.isEnabled()) {
-                m.onRenderOverlay(sr);
+                RenderUtils.setGlobalAlpha(m.getHudOpacity());
+                float scale = m.getHudScale();
+                if (scale != 1.0F) {
+                    org.lwjgl.opengl.GL11.glPushMatrix();
+                    // Scale around the element's own anchor point so
+                    // resizing in UI Edit Mode grows/shrinks it in
+                    // place instead of drifting toward the corner.
+                    org.lwjgl.opengl.GL11.glTranslatef(m.getHudX(), m.getHudY(), 0F);
+                    org.lwjgl.opengl.GL11.glScalef(scale, scale, 1F);
+                    org.lwjgl.opengl.GL11.glTranslatef(-m.getHudX(), -m.getHudY(), 0F);
+                    m.onRenderOverlay(sr);
+                    org.lwjgl.opengl.GL11.glPopMatrix();
+                } else {
+                    m.onRenderOverlay(sr);
+                }
             }
         }
+        RenderUtils.setGlobalAlpha(1.0F);
     }
 
     @SubscribeEvent

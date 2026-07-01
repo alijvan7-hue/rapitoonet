@@ -1,37 +1,45 @@
 # Rapit Client
 
-A lightweight, black (`#111111`) & yellow (`#FFD400`) themed utility client
+A premium-styled, black (`#0D0D0D`) & yellow (`#FFD400`) themed utility client
 for **Minecraft Forge 1.8.9**, built in Java with Gradle/ForgeGradle.
 
-> **Honesty note on scope:** this repo ships a fully working core
-> (module system, config persistence, keybinds, HUD, ClickGUI, cape
-> hook, custom main menu) with **19 real, functioning modules**. It
-> does not yet include every module named in the original wishlist
-> (Motion Blur, Block Overlay, Chunk Borders, Damage Particles, Better
-> Chat, Crosshair Editor, Item Physics, and a few performance/cosmetic
-> extras). Those were left out rather than shipped as fake/empty
-> "modules" — see [Roadmap](#roadmap) below for what's next and how
-> the architecture already supports adding them cleanly.
+> **Scope note:** this build focuses on UI/UX polish - an animated ClickGUI,
+> per-module right-click settings (toggle/slider/color/keybind), a UI Edit
+> Mode with drag-to-resize, animated keystrokes, Block Outline with RGB, and
+> a clean default cape. It intentionally does **not** include Fly, Reach, or
+> Velocity/anti-knockback modules, or an autoclicker - those give an unfair
+> advantage over other players on multiplayer servers, generally violate
+> server rules, and (in the case of a "humanized" variable-CPS autoclicker)
+> are specifically designed to evade anticheat detection. That's a different
+> category of software than a cosmetic/QoL client and isn't something this
+> project builds.
 
 ## Copyright note on Garfield branding
 
 Garfield is a copyrighted character owned by Paws, Inc. This project does
-**not** bundle any Garfield artwork. What it does ship:
-
-- A generic original placeholder crest at
-  `src/main/resources/assets/rapitclient/textures/gui/logo.png`
-- A generic original placeholder cape texture at
-  `src/main/resources/assets/rapitclient/textures/cape/cape.png`
-- Full code plumbing (`CapeRenderer`, `RapitMainMenu`) that loads whatever
-  PNG lives at those paths
-
-If you own or have a license for Garfield artwork, drop your own PNGs in at
-those exact paths and rebuild — no code changes needed.
+**not** bundle any Garfield artwork. The default cape is a plain dark cape
+with no logo (`src/main/resources/assets/rapitclient/textures/cape/cape.png`)
+and the main-menu crest is an original placeholder
+(`src/main/resources/assets/rapitclient/textures/gui/logo.png`). Swap either
+PNG for your own licensed artwork - no code changes needed.
 
 ## Features
 
-### HUD (all draggable — press `H` in-game to enter the HUD editor)
-- FPS Counter, CPS Counter, Ping, Coordinates, Direction, Clock
+### ClickGUI (open with `Right Shift`)
+- Floating panel anchored center-right (not full-screen), draggable by its title bar
+- Fade + slide-in open animation, hover "grow" and click "bounce" on module rows
+- Category tabs: HUD / Visual / Performance / Cosmetics / Settings
+- **Right-click any module** to open its settings popup:
+  - Enabled toggle switch
+  - Keybind rebind
+  - Opacity slider (HUD modules)
+  - Any module-specific sliders (e.g. Block Outline thickness)
+  - Color picker: hue slider + RGB-cycle toggle (e.g. Block Outline color)
+- "UI Edit Mode" entry under the Settings tab opens the HUD editor
+
+### HUD (all draggable and resizable — see UI Edit Mode below)
+- FPS Counter, CPS Counter (smoothed, not instant-jump), Ping, Coordinates,
+  Direction, Clock
 - Armor HUD, Potion Effects list
 - Toggle Sprint (default bind: `R`)
 - Watermark
@@ -40,49 +48,76 @@ those exact paths and rebuild — no code changes needed.
 - Fullbright (default bind: `F`)
 - Zoom (hold, default bind: `C`)
 - Clear Water (removes underwater fog)
-- Keystrokes (WASD + mouse buttons)
+- **Keystrokes** — animated press: keys scale up with an ease-out-back
+  "bounce" and glow on press, easing back down on release
 - Item Counter (large held-stack count)
+- **Block Outline** — highlights the block you're looking at; color and
+  thickness are configurable via its right-click settings panel, including
+  an RGB cycling mode
 
 ### Performance
-- Entity Culling helper (distance-based skip logic)
+- Entity Culling (skips rendering far-away entities via `RenderLivingEvent`)
 - Particle Limiter
-- Fast GUI (disables background blur pass)
+- Fast GUI (disables Fancy Graphics)
 
 ### Cosmetics
-- Garfield Cape slot (client-side only cosmetic layer)
+- **Cape** — plain dark cape, no logo, client-side only. Positioning is
+  driven off the player's own interpolated body yaw/limb-swing (same
+  values vanilla uses for the player model) instead of a free-running
+  timer, which is what keeps it from jittering/drifting during turns.
 - Cosmetics master toggle
 
-### GUI
-- **ClickGUI** — open with `Right Shift`. Black/yellow theme, category
-  tabs (HUD / Visual / Performance / Cosmetics / Settings), live search,
-  draggable panel, left-click to toggle a module, right-click to rebind it.
-- **HUD Editor** — open with `H`. Click-drag any enabled HUD element to
-  reposition it live.
-- **Custom animated main menu** replacing vanilla's, with the branded
-  wordmark, animated gradient background, and Singleplayer/Multiplayer/
-  Options/Quit buttons.
+### UI Edit Mode
+Reachable from the ClickGUI's Settings tab (or press `H` directly):
+- Click-drag any HUD element to reposition it
+- Click-drag the small handle at an element's bottom-right corner to
+  resize it (adjusts a per-element scale factor, 0.5x-2.5x)
+- Position, scale, and opacity all persist automatically
+
+### Animation system
+`com.rapit.client.animation` provides `Easing` (linear, ease-in-out,
+ease-out-cubic, ease-out-back/bounce) and `AnimatedValue` (a wall-clock-time
+driven float that eases toward a target). Every animated element in the
+client - panel open/close, row hover/press, keystroke press, CPS counter,
+settings popup pop-in - is built on these two classes rather than each
+screen hand-rolling its own timer logic.
+
+### Font rendering
+1.8.9's FontRenderer doesn't support swapping in an arbitrary TTF/OTF
+without shipping a full bitmap font resource pack, which wasn't something
+that could be authored and verified without a working Forge toolchain in
+the environment this was built in. What's included instead:
+`RenderUtils.drawScaledString(...)`, which renders vanilla's font through a
+GL11 scale transform for crisper, larger "premium" headers (used for the
+ClickGUI title). If you want a true custom font, drop a bitmap font
+resource pack's assets in under `assets/minecraft/textures/font/` and
+Forge/vanilla will pick it up automatically - no code changes needed.
 
 ### Config
-Every module's enabled state, keybind, and (for HUD modules) screen
-position auto-saves to `config/rapitclient.properties` on world exit /
-game close, and reloads automatically on next launch.
+Every module's enabled state, keybind, HUD position/opacity/scale, and
+right-click-panel settings (slider values, color hue + RGB mode) auto-save
+to `config/rapitclient.properties` on world exit and reload automatically
+on next launch.
 
 ## Project structure
 
 ```
 src/main/java/com/rapit/client/
 ├── RapitClient.java        # @Mod entry point
-├── module/                 # Module base class, categories, manager/dispatcher
+├── animation/                # Easing + AnimatedValue (shared by every animated UI element)
+├── module/
+│   ├── Module.java             # base class: enabled state, keybind, HUD position/opacity/scale
+│   └── settings/                # SliderSetting, ColorSetting - right-click panel values
 ├── modules/
-│   ├── hud/                 # FPS, CPS, ping, coords, clock, armor, etc.
-│   ├── visual/               # Fullbright, zoom, keystrokes, clear water, item counter
-│   ├── performance/          # Entity culling, particle limiter, fast GUI
-│   └── cosmetics/             # Cape + cosmetics master toggle
-├── gui/                     # ClickGUI, HUD editor, animated main menu
+│   ├── hud/                   # FPS, CPS, ping, coords, clock, armor, etc.
+│   ├── visual/                  # Fullbright, zoom, keystrokes, clear water, item counter, block outline
+│   ├── performance/              # Entity culling, particle limiter, fast GUI
+│   └── cosmetics/                 # Cape + cosmetics master toggle
+├── gui/                     # ClickGUI, HUD/UI Edit Mode, animated main menu
 ├── cape/                    # Client-side cosmetic cape renderer
-├── render/                  # Shared GL11 drawing helpers (rounded panels, theme colors)
-├── config/                  # Save/load module state
-└── events/                  # Keybind registration/handling
+├── render/                  # Shared GL11 drawing helpers (rounded panels, theme colors, opacity)
+├── config/                  # Save/load module state + settings
+└── events/                  # Keybind registration/handling, config auto-save
 ```
 
 ## Requirements
@@ -134,11 +169,13 @@ setup required.
 | Key | Action |
 |---|---|
 | `Right Shift` | Open ClickGUI |
-| `H` | Open HUD position editor |
+| `H` | Open UI Edit Mode (also reachable from ClickGUI → Settings) |
 | `F` | Toggle Fullbright |
 | `C` (hold) | Zoom |
 | `R` | Toggle Sprint |
-| Right-click a module row in ClickGUI | Rebind its key |
+| Right-click a module row in ClickGUI | Open its settings popup |
+| In settings popup: click Keybind row, then press a key | Rebind |
+| In settings popup: drag hue bar / slider | Adjust color / value |
 
 ## Roadmap
 
@@ -148,17 +185,24 @@ Architecture already supports these as drop-in `Module` subclasses
 rather than shipped half-working:
 
 - Motion Blur (needs an accumulation-buffer or shader pass)
-- Block Overlay / X-ray-style outline rendering
 - Chunk Borders
 - Damage Particles indicator
 - Better Chat (timestamps, deduping, copy-to-clipboard)
 - Crosshair Editor
 - Item Physics (dropped-item render tweaks)
-- Hit Color customization
 - FPS Boost / Memory Optimization / Animation Optimization / Smart Render
   (deeper render-pipeline tuning)
 - Simple Cape Manager (swap between multiple saved cape textures)
-- Client Color Theme picker (currently theme is fixed black/yellow)
+- True Gaussian blur behind the ClickGUI panel (needs a custom fragment
+  shader; current panel uses a layered drop-shadow + translucent backdrop
+  as a lighter-weight stand-in - see `ClickGui`'s class javadoc)
+- Real bitmap font swap (drop a resource pack's font assets into
+  `assets/minecraft/textures/font/` - Forge picks it up automatically,
+  no code change needed)
+
+Not planned: Fly, Reach, Velocity/anti-knockback, or an autoclicker. These
+give an unfair advantage in multiplayer and generally violate server rules;
+see the scope note at the top of this file.
 
 ## License
 

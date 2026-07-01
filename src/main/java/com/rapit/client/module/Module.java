@@ -1,8 +1,12 @@
 package com.rapit.client.module;
 
+import com.rapit.client.module.settings.ModuleSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for every toggleable feature in Rapit Client.
@@ -35,6 +39,16 @@ public abstract class Module {
     // Position for HUD elements (top-left anchored, in scaled GUI coords).
     private float hudX;
     private float hudY;
+
+    // HUD elements can additionally have a per-element opacity (see
+    // ClickGUI right-click panel "Opacity" slider on HUD modules).
+    private float hudOpacity = 1.0F;
+
+    // Per-element scale, adjustable by dragging the resize handle in
+    // UI Edit Mode (see HudEditorGui). 1.0 = default size.
+    private float hudScale = 1.0F;
+
+    private final List<ModuleSetting> settings = new ArrayList<>();
 
     protected Module(String name, String description, ModuleCategory category, int defaultKeybind) {
         this(name, description, category, defaultKeybind, false);
@@ -128,5 +142,35 @@ public abstract class Module {
     /** True for modules that draw something at a draggable HUD position. */
     public boolean isMovable() {
         return category == ModuleCategory.HUD;
+    }
+
+    public float getHudOpacity() {
+        return hudOpacity;
+    }
+
+    public void setHudOpacity(float hudOpacity) {
+        this.hudOpacity = Math.max(0.1F, Math.min(1.0F, hudOpacity));
+    }
+
+    public float getHudScale() {
+        return hudScale;
+    }
+
+    public void setHudScale(float hudScale) {
+        this.hudScale = Math.max(0.5F, Math.min(2.5F, hudScale));
+    }
+
+    /** Registers a configurable value shown in this module's right-click settings panel. */
+    protected void addSetting(ModuleSetting setting) {
+        settings.add(setting);
+    }
+
+    public List<ModuleSetting> getSettings() {
+        return settings;
+    }
+
+    /** True if this module has anything to show in a right-click settings popup. */
+    public boolean hasSettings() {
+        return !settings.isEmpty();
     }
 }
