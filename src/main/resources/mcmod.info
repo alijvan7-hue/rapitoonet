@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "rapitclient",
+    "name": "Rapit Client",
+    "description": "A lightweight, black & yellow themed utility client for Minecraft Forge 1.8.9. Garfield-inspired branding, practical HUD/visual/performance modules, and a fast ClickGUI.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["Rapit"],
+    "credits": "Built for the Rapit Client project",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

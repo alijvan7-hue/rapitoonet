@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = project.mod_version
+group = 'com.rapit.client'
+archivesBaseName = 'RapitClient'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    // NOTE: this mappings channel/version could not be verified against
+    // Forge's live MCPBot mapping list from this environment (no network
+    // access to Forge's servers here). "stable_22" is the commonly used
+    // channel for 1.8.9 projects, but if `setupDecompWorkspace` fails to
+    // resolve it, check http://export.mcpbot.bspatchdev.com (or Forge's
+    // current mappings mirror) for the right stable/snapshot id and swap
+    // it in here.
+    mappings = "stable_22"
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/maven' } // MixinGradle style repos, unused here but kept for future
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+    // Gson is bundled with Minecraft/Forge already, no extra dependency required.
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            "FMLCorePluginContainsFMLMod": "true",
+            "ForceLoadAsMod": "true"
+        )
+    }
+}
