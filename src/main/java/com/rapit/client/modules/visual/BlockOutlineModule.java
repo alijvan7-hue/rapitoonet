@@ -49,7 +49,7 @@ public class BlockOutlineModule extends Module {
             return;
         }
 
-        BlockPos pos = mc.objectMouseOver.blockPos;
+        BlockPos pos = mc.objectMouseOver.getBlockPos();
         if (mc.theWorld.getBlockState(pos).getBlock().getMaterial()
                 == net.minecraft.block.material.Material.air) {
             return;
