@@ -15,7 +15,7 @@ public class ClockModule extends Module {
     private final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 
     public ClockModule() {
-        super("Clock", "Shows the current real-world time", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("Clock", "Shows the current real-world time", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 54);
     }
 

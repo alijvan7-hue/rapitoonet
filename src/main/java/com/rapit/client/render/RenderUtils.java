@@ -73,9 +73,9 @@ public final class RenderUtils {
 
     public static void drawString(String text, float x, float y, int color, boolean shadow) {
         if (shadow) {
-            font().drawStringWithShadow(text, x, y, color);
+            font().drawStringWithShadow(text, (int) x, (int) y, color);
         } else {
-            font().drawString(text, x, y, color);
+            font().drawString(text, (int) x, (int) y, color);
         }
     }
 

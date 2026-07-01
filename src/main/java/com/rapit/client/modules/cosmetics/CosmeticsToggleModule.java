@@ -13,6 +13,6 @@ import org.lwjgl.input.Keyboard;
 public class CosmeticsToggleModule extends Module {
 
     public CosmeticsToggleModule() {
-        super("Cosmetics", "Master toggle for all cosmetic effects", ModuleCategory.COSMETIC, Keyboard.KEY_NONE, true);
+        super("Cosmetics", "Master toggle for all cosmetic effects", ModuleCategory.COSMETIC, Module.KEY_NONE, true);
     }
 }

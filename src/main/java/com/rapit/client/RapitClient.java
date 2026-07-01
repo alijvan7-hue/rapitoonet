@@ -3,6 +3,7 @@ package com.rapit.client;
 import com.rapit.client.cape.CapeRenderer;
 import com.rapit.client.config.ConfigManager;
 import com.rapit.client.events.KeybindHandler;
+import com.rapit.client.events.SaveConfigHandler;
 import com.rapit.client.gui.MainMenuHandler;
 import com.rapit.client.module.ModuleManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -10,7 +11,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLStoppingEvent;
 
 /**
  * Rapit Client - Main mod entry point.
@@ -52,15 +52,21 @@ public class RapitClient {
         MinecraftForge.EVENT_BUS.register(new MainMenuHandler());
         MinecraftForge.EVENT_BUS.register(new CapeRenderer());
         MinecraftForge.EVENT_BUS.register(new KeybindHandler());
+        MinecraftForge.EVENT_BUS.register(new SaveConfigHandler());
 
         RapitLog.info("Rapit Client v" + VERSION + " initialized with "
                 + moduleManager.getModules().size() + " modules.");
     }
 
-    @EventHandler
-    public void onStopping(FMLStoppingEvent event) {
-        // Persist toggle/keybind state on shutdown so nothing is lost
-        // if the user doesn't explicitly save from the ClickGUI.
+    /**
+     * Persists module state whenever a world is exited. There is no
+     * clean client-side "game is shutting down" event in 1.8.9's FML
+     * (FMLStoppingEvent only fires on the dedicated/integrated
+     * server side, not for the client mod), so world-unload is the
+     * most reliable point that fires on quit-to-title, world change,
+     * and disconnect alike.
+     */
+    public void saveConfig() {
         if (moduleManager != null && configManager != null) {
             configManager.save(moduleManager);
         }

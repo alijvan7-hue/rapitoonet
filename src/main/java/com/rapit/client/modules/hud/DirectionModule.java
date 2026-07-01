@@ -13,7 +13,7 @@ public class DirectionModule extends Module {
     private static final String[] DIRECTIONS = {"S", "SW", "W", "NW", "N", "NE", "E", "SE"};
 
     public DirectionModule() {
-        super("Direction", "Shows the direction you're facing", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("Direction", "Shows the direction you're facing", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 44);
     }
 

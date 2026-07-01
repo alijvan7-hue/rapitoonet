@@ -16,7 +16,7 @@ import org.lwjgl.input.Keyboard;
 public class ClearWaterModule extends Module {
 
     public ClearWaterModule() {
-        super("Clear Water", "Removes underwater fog for clear visibility", ModuleCategory.VISUAL, Keyboard.KEY_NONE);
+        super("Clear Water", "Removes underwater fog for clear visibility", ModuleCategory.VISUAL, Module.KEY_NONE);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ClearWaterModule extends Module {
     @SubscribeEvent
     public void onFogDensity(EntityViewRenderEvent.FogDensity event) {
         if (mc.thePlayer != null && mc.thePlayer.isInsideOfMaterial(net.minecraft.block.material.Material.water)) {
-            event.setDensity(0.01F);
+            event.density = 0.01F;
             event.setCanceled(true);
         }
     }

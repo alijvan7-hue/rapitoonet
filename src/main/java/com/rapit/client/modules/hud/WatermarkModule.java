@@ -11,7 +11,7 @@ import org.lwjgl.input.Keyboard;
 public class WatermarkModule extends Module {
 
     public WatermarkModule() {
-        super("Watermark", "Displays the Rapit Client watermark", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("Watermark", "Displays the Rapit Client watermark", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 84);
     }
 

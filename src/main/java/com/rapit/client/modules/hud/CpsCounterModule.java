@@ -22,7 +22,7 @@ public class CpsCounterModule extends Module {
     private boolean lastRightDown;
 
     public CpsCounterModule() {
-        super("CPS Counter", "Shows left/right clicks per second", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("CPS Counter", "Shows left/right clicks per second", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 14);
     }
 

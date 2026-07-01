@@ -19,7 +19,7 @@ public class FpsCounterModule extends Module {
     private Field debugFpsField;
 
     public FpsCounterModule() {
-        super("FPS Counter", "Shows current frames per second", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("FPS Counter", "Shows current frames per second", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 4);
         try {
             debugFpsField = Minecraft.class.getDeclaredField("debugFPS");

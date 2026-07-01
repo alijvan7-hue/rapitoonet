@@ -20,7 +20,7 @@ import org.lwjgl.input.Keyboard;
 public class ArmorHudModule extends Module {
 
     public ArmorHudModule() {
-        super("Armor HUD", "Shows equipped armor pieces on screen", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("Armor HUD", "Shows equipped armor pieces on screen", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 100);
     }
 

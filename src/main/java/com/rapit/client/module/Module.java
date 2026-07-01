@@ -16,6 +16,13 @@ import org.lwjgl.input.Keyboard;
  */
 public abstract class Module {
 
+    /**
+     * Sentinel "no keybind assigned" value. LWJGL's Keyboard class
+     * has no KEY_NONE constant of its own (0 is simply unused by any
+     * real key), so this is Rapit Client's own convention for it.
+     */
+    public static final int KEY_NONE = 0;
+
     protected final Minecraft mc = Minecraft.getMinecraft();
 
     private final String name;
@@ -102,7 +109,7 @@ public abstract class Module {
     }
 
     public String getKeybindName() {
-        return keybind == Keyboard.KEY_NONE ? "NONE" : Keyboard.getKeyName(keybind);
+        return keybind == KEY_NONE ? "NONE" : Keyboard.getKeyName(keybind);
     }
 
     public float getHudX() {

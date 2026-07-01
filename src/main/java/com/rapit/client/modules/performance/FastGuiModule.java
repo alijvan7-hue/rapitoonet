@@ -15,7 +15,7 @@ public class FastGuiModule extends Module {
     private boolean previousFancy;
 
     public FastGuiModule() {
-        super("Fast GUI", "Disables Fancy Graphics for lighter GUI/world rendering", ModuleCategory.PERFORMANCE, Keyboard.KEY_NONE, true);
+        super("Fast GUI", "Disables Fancy Graphics for lighter GUI/world rendering", ModuleCategory.PERFORMANCE, Module.KEY_NONE, true);
     }
 
     @Override

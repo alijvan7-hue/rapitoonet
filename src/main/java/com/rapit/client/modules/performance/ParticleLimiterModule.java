@@ -14,7 +14,7 @@ public class ParticleLimiterModule extends Module {
     private int previousSetting;
 
     public ParticleLimiterModule() {
-        super("Particle Limiter", "Caps particle density for higher FPS", ModuleCategory.PERFORMANCE, Keyboard.KEY_NONE, true);
+        super("Particle Limiter", "Caps particle density for higher FPS", ModuleCategory.PERFORMANCE, Module.KEY_NONE, true);
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.lwjgl.input.Keyboard;
 public class CoordinatesModule extends Module {
 
     public CoordinatesModule() {
-        super("Coordinates", "Shows your X/Y/Z position", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("Coordinates", "Shows your X/Y/Z position", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 34);
     }
 

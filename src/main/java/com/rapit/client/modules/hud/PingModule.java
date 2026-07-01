@@ -4,7 +4,7 @@ import com.rapit.client.module.Module;
 import com.rapit.client.module.ModuleCategory;
 import com.rapit.client.render.RenderUtils;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.multiplayer.NetHandlerPlayClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -14,7 +14,7 @@ import org.lwjgl.input.Keyboard;
 public class PingModule extends Module {
 
     public PingModule() {
-        super("Ping", "Shows current server ping", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("Ping", "Shows current server ping", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 24);
     }
 

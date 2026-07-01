@@ -18,7 +18,7 @@ import java.util.Collection;
 public class PotionEffectsModule extends Module {
 
     public PotionEffectsModule() {
-        super("Potion Effects", "Lists active potion effects with time left", ModuleCategory.HUD, Keyboard.KEY_NONE, true);
+        super("Potion Effects", "Lists active potion effects with time left", ModuleCategory.HUD, Module.KEY_NONE, true);
         setHudPosition(4, 64);
     }
 

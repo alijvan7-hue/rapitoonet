@@ -18,6 +18,6 @@ import org.lwjgl.input.Keyboard;
 public class CapeModule extends Module {
 
     public CapeModule() {
-        super("Garfield Cape", "Displays a cosmetic cape on your local player", ModuleCategory.COSMETIC, Keyboard.KEY_NONE, true);
+        super("Garfield Cape", "Displays a cosmetic cape on your local player", ModuleCategory.COSMETIC, Module.KEY_NONE, true);
     }
 }

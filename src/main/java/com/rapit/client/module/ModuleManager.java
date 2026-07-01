@@ -141,7 +141,7 @@ public class ModuleManager {
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         for (Module m : modules) {
             int bind = m.getKeybind();
-            if (bind != Keyboard.KEY_NONE && Keyboard.getEventKey() == bind && Keyboard.getEventKeyState()) {
+            if (bind != Module.KEY_NONE && Keyboard.getEventKey() == bind && Keyboard.getEventKeyState()) {
                 m.toggle();
             }
         }

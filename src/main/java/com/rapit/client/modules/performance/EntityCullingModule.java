@@ -20,7 +20,7 @@ public class EntityCullingModule extends Module {
     private static final double MAX_RENDER_DISTANCE_SQ = 96 * 96;
 
     public EntityCullingModule() {
-        super("Entity Culling", "Skips rendering far-away entities to save FPS", ModuleCategory.PERFORMANCE, Keyboard.KEY_NONE, true);
+        super("Entity Culling", "Skips rendering far-away entities to save FPS", ModuleCategory.PERFORMANCE, Module.KEY_NONE, true);
     }
 
     @Override

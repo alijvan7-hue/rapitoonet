@@ -170,7 +170,7 @@ public class ClickGui extends GuiScreen {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws java.io.IOException {
         if (awaitingBind != null) {
-            awaitingBind.setKeybind(keyCode == Keyboard.KEY_ESCAPE ? Keyboard.KEY_NONE : keyCode);
+            awaitingBind.setKeybind(keyCode == Keyboard.KEY_ESCAPE ? Module.KEY_NONE : keyCode);
             awaitingBind = null;
             return;
         }

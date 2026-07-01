@@ -15,7 +15,7 @@ import org.lwjgl.input.Keyboard;
 public class ItemCounterModule extends Module {
 
     public ItemCounterModule() {
-        super("Item Counter", "Large readable count for the held item stack", ModuleCategory.VISUAL, Keyboard.KEY_NONE, true);
+        super("Item Counter", "Large readable count for the held item stack", ModuleCategory.VISUAL, Module.KEY_NONE, true);
     }
 
     @Override

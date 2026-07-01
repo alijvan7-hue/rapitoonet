@@ -18,7 +18,7 @@ public class KeystrokesModule extends Module {
     private static final int GAP = 2;
 
     public KeystrokesModule() {
-        super("Keystrokes", "Shows WASD/mouse key presses on screen", ModuleCategory.VISUAL, Keyboard.KEY_NONE, true);
+        super("Keystrokes", "Shows WASD/mouse key presses on screen", ModuleCategory.VISUAL, Module.KEY_NONE, true);
         setHudPosition(4, 200);
     }
 
